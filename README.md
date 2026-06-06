@@ -192,7 +192,7 @@ Family background pattern reference (8 patterns: signal → real-world inference
 
 ## 许可证 / License
 
-[MIT](./LICENSE) © 2025
+[MIT](./LICENSE) © 2026
 
 ---
 
