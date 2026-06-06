@@ -26,7 +26,6 @@ tags: [bazi, 八字, 命理, 四柱, 算命, fortune-telling, chinese-astrology]
 
 - 推荐运行环境：Node 24（可直接运行 TypeScript 源码）
 - 兼容方案：若 Node 版本较低，使用 `tsx` 执行
-- Python 3（用于反推扫描脚本）
 
 ```bash
 npm install
@@ -46,7 +45,7 @@ npm install
 | `scripts/buildBaziFromSolar.ts` | 根据阳历时间生成八字 Markdown |
 | `scripts/buildBaziFromLunar.ts` | 根据农历时间生成八字 Markdown |
 | `scripts/getChineseCalendar.ts` | 查询指定日期（默认今天）的农历与干支信息 |
-| `scripts/scan_year.py` | 从已知八字反查阳历日期（全年扫描） |
+| `scripts/scan_year.ts` | 从已知八字反查阳历日期（全年扫描） |
 | `scripts/util.ts` | 公共参数解析工具 |
 
 ## buildBaziFromSolar.ts
@@ -94,22 +93,22 @@ const solarDay = LunarDay.fromYmd(1998, -5, 13).getSolarDay();
 
 # 二、反推日期：从已知八字反查阳历
 
-当用户只给出四柱干支（如"丁丑 癸卯 戊午 庚申"）而没有具体日期时，使用 `scan_year.py`。
+当用户只给出四柱干支（如"丁丑 癸卯 戊午 庚申"）而没有具体日期时，使用 `scan_year.ts`。
 
 ## 使用方法
 
 ```bash
 # 完整四柱匹配
-python3 scripts/scan_year.py 1996 0 --year-pillar 丙子 --month-pillar 辛卯 --day-pillar 甲寅 --hour-pillar 壬申
+node scripts/scan_year.ts 1996 0 --year-pillar 丙子 --month-pillar 辛卯 --day-pillar 甲寅 --hour-pillar 壬申
 
 # 部分匹配（只知年月日柱）
-python3 scripts/scan_year.py 1996 0 --year-pillar 丙子 --month-pillar 辛卯 --day-pillar 甲寅
+node scripts/scan_year.ts 1996 0 --year-pillar 丙子 --month-pillar 辛卯 --day-pillar 甲寅
 
 # 指定时辰扫描
-python3 scripts/scan_year.py 1996 0 --day-pillar 甲寅 --hour 12:00:00
+node scripts/scan_year.ts 1996 0 --day-pillar 甲寅 --hour 12:00:00
 
 # 跨年份扫描（每60年重复）
-for y in 1936 1996; do python3 scripts/scan_year.py $y 0 --day-pillar 甲寅; done
+for y in 1936 1996; do node scripts/scan_year.ts $y 0 --day-pillar 甲寅; done
 ```
 
 参数：`year`(必填) `gender`(0=女/1=男) `--year-pillar` `--month-pillar` `--day-pillar` `--hour-pillar` `--hour`(默认15:30:00)
@@ -135,7 +134,7 @@ for y in 1936 1996; do python3 scripts/scan_year.py $y 0 --day-pillar 甲寅; do
 
 1. 年柱推年份（干支纪年，如丁丑=1997，每60年一轮）
 2. 月柱推农历月份范围
-3. 在缩小的月份范围内用 `scan_year.py` 扫描匹配日柱
+3. 在缩小的月份范围内用 `scan_year.ts` 扫描匹配日柱
 4. 验证时柱是否正确
 
 ---
@@ -661,4 +660,4 @@ for y in 1936 1996; do python3 scripts/scan_year.py $y 0 --day-pillar 甲寅; do
 2. 时间字符串不要携带时区后缀（如 `Z`、`+08:00`），以免产生与预期不一致的换日结果
 3. 涉及 23:00-23:59 出生时，建议显式传 `sect`，避免晚子时归属歧义
 4. 农历闰月必须先转阳历再用 `buildBaziFromSolar.ts`
-5. macOS 的 `date` 命令不支持 `-d` 选项，反推扫描请用 `scan_year.py`
+5. 反推扫描请用 `scan_year.ts`（纯 TypeScript，无需 Python）

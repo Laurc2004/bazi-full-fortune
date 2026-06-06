@@ -46,7 +46,6 @@ This project relies on LLMs for destiny analysis and interpretation. Below are t
 ### 环境要求 / Prerequisites
 
 - Node.js ≥ 18（推荐 24，可直接运行 TypeScript）
-- Python 3（用于反推扫描脚本 `scan_year.py`）
 
 ### 安装 / Installation
 
@@ -90,7 +89,7 @@ node scripts/getChineseCalendar.ts 2024-02-10
 
 ```bash
 # 完整四柱匹配 / Full four-pillar match
-python3 scripts/scan_year.py 2000 0 \
+node scripts/scan_year.ts 2000 0 \
   --year-pillar 庚辰 \
   --month-pillar 戊子 \
   --day-pillar 甲寅 \
@@ -98,10 +97,10 @@ python3 scripts/scan_year.py 2000 0 \
   --hour 03:30:00
 
 # 部分匹配（仅日柱）/ Partial match (day pillar only)
-python3 scripts/scan_year.py 2000 0 --day-pillar 甲寅
+node scripts/scan_year.ts 2000 0 --day-pillar 甲寅
 
 # 跨年份扫描（每60年重复）/ Cross-year scan (60-year cycle)
-for y in 1940 2000; do python3 scripts/scan_year.py $y 0 --day-pillar 甲寅; done
+for y in 1940 2000; do node scripts/scan_year.ts $y 0 --day-pillar 甲寅; done
 ```
 
 ---
@@ -118,7 +117,7 @@ bazi-full-fortune/
 │   ├── buildBaziFromSolar.ts       # 阳历排盘 / Solar chart
 │   ├── buildBaziFromLunar.ts       # 农历排盘 / Lunar chart
 │   ├── getChineseCalendar.ts       # 黄历查询 / Almanac query
-│   ├── scan_year.py                # 反推扫描 / Reverse lookup
+│   ├── scan_year.ts                # 反推扫描 / Reverse lookup
 │   └── util.ts                     # 公共工具 / Shared utilities
 └── references/
     └── family-patterns.md          # 家庭背景命理模式 / Family pattern reference

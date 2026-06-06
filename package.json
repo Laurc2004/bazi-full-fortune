@@ -12,6 +12,6 @@
     "bazi:solar": "node scripts/buildBaziFromSolar.ts",
     "bazi:lunar": "node scripts/buildBaziFromLunar.ts",
     "calendar": "node scripts/getChineseCalendar.ts",
-    "scan": "python3 scripts/scan_year.py"
+    "scan": "node scripts/scan_year.ts"
   }
 }
