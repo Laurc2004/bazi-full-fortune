@@ -1,7 +1,7 @@
 ---
 name: bazi-full-fortune
 description: "八字全方位算命 Skill — 排盘引擎 + 六亲十神规则 + 家庭校准 + 八大维度全方位分析模板。"
-tags: [bazi, 八字, 命理, 四柱, 算命, fortune-telling, chinese-astrology]
+tags: [bazi, fortune-telling, chinese-astrology, destiny-analysis, four-pillars]
 ---
 
 # 八字全方位算命 Skill
