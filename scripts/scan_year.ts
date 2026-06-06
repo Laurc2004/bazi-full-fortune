@@ -28,6 +28,21 @@
 
 import { buildBaziFromSolar } from 'cantian-tymext';
 
+/**
+ * Extract "天干地支" string from a pillar object.
+ * cantian-tymext returns Chinese-named fields:
+ *   bazi.年柱.天干.天干 = "庚"
+ *   bazi.年柱.地支.地支 = "辰"
+ */
+function pillarString(pillar: any): string {
+  const tg = pillar?.天干?.天干;
+  const dz = pillar?.地支?.地支;
+  if (!tg || !dz) {
+    throw new Error(`Unexpected pillar shape: ${JSON.stringify(pillar).slice(0, 200)}`);
+  }
+  return `${tg}${dz}`;
+}
+
 interface ScanOptions {
   year: number;
   gender: 0 | 1;
@@ -87,10 +102,10 @@ function scanYear(opts: ScanOptions): Array<{ date: string; bazi: string }> {
     try {
       const bazi = buildBaziFromSolar({ solarTime, gender: opts.gender, sect: 2 });
       const pillars = [
-        bazi.yearPillar.toString(),
-        bazi.monthPillar.toString(),
-        bazi.dayPillar.toString(),
-        bazi.hourPillar.toString(),
+        pillarString(bazi.年柱),
+        pillarString(bazi.月柱),
+        pillarString(bazi.日柱),
+        pillarString(bazi.时柱),
       ];
 
       let match = true;
@@ -105,8 +120,11 @@ function scanYear(opts: ScanOptions): Array<{ date: string; bazi: string }> {
         results.push({ date: dateStr, bazi: baziStr });
         console.log(`MATCH: ${dateStr} -> ${baziStr}`);
       }
-    } catch {
-      // skip invalid dates
+    } catch (err: any) {
+      // Only skip invalid date errors; log other errors for debugging
+      if (!err?.message?.includes('Invalid') && !err?.message?.includes('invalid')) {
+        console.error(`Error on ${solarTime}:`, err?.message || err);
+      }
     }
 
     current.setDate(current.getDate() + 1);
