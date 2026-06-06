@@ -48,19 +48,19 @@ npm install
 阳历排盘：
 
 ```bash
-node scripts/buildBaziFromSolar.ts "2000-12-22T03:30:00" 0 2
+node scripts/buildBaziFromSolar.ts "2004-04-05T12:00:00" 1 2
 ```
 
 | 参数 | 说明 | 必填 | 取值 |
 |------|------|------|------|
-| solarTime | 阳历出生时间（ISO 8601，不带时区） | 是 | `2000-12-22T03:30:00` |
+| solarTime | 阳历出生时间（ISO 8601，不带时区） | 是 | `2004-04-05T12:00:00` |
 | gender | 性别 | 否 | `1`=男，`0`=女（默认 1） |
 | sect | 早晚子时配置 | 否 | `1`=23:00-23:59 算次日，`2`=算当日（默认 2） |
 
 农历排盘：
 
 ```bash
-node scripts/buildBaziFromLunar.ts "2000-11-27T03:30:00" 0 2
+node scripts/buildBaziFromLunar.ts "2004-03-16T12:00:00" 1 2
 ```
 
 参数格式与阳历一致，时间传入农历日期。注意：不支持农历闰月，闰月需先手动转换为阳历再调用阳历排盘。
@@ -79,31 +79,31 @@ node scripts/getChineseCalendar.ts 2024-02-10
 
 ```bash
 # 完整四柱匹配
-node scripts/scan_year.ts 2000 0 \
-  --year-pillar 庚辰 \
-  --month-pillar 戊子 \
+node scripts/scan_year.ts 2004 1 \
+  --year-pillar 甲申 \
+  --month-pillar 戊辰 \
   --day-pillar 甲寅 \
-  --hour-pillar 丙寅 \
-  --hour 03:30:00
+  --hour-pillar 庚午 \
+  --hour 12:00:00
 
 # 部分匹配（只知道年月日柱，时柱不确定）
-node scripts/scan_year.ts 2000 0 \
-  --year-pillar 庚辰 \
-  --month-pillar 戊子 \
+node scripts/scan_year.ts 2004 1 \
+  --year-pillar 甲申 \
+  --month-pillar 戊辰 \
   --day-pillar 甲寅
 
 # 跨年份扫描（同一八字每 60 年重复出现）
-for y in 1940 2000; do node scripts/scan_year.ts $y 0 --day-pillar 甲寅; done
+for y in 1944 2004; do node scripts/scan_year.ts $y 1 --day-pillar 甲寅; done
 ```
 
 | 参数 | 说明 |
 |------|------|
 | year | 要扫描的年份（必填） |
 | gender | 0=女，1=男（必填） |
-| --year-pillar | 年柱过滤（如 庚辰） |
-| --month-pillar | 月柱过滤（如 戊子） |
+| --year-pillar | 年柱过滤（如 甲申） |
+| --month-pillar | 月柱过滤（如 戊辰） |
 | --day-pillar | 日柱过滤（如 甲寅） |
-| --hour-pillar | 时柱过滤（如 丙寅） |
+| --hour-pillar | 时柱过滤（如 庚午） |
 | --hour | 扫描用的时间，默认 15:30:00（申时） |
 
 #### 2. npm scripts 快捷方式
@@ -111,11 +111,11 @@ for y in 1940 2000; do node scripts/scan_year.ts $y 0 --day-pillar 甲寅; done
 不想记完整路径可以用 npm scripts：
 
 ```bash
-npm run bazi:solar -- "2000-12-22T03:30:00" 0 2
-npm run bazi:lunar -- "2000-11-27T03:30:00" 0 2
+npm run bazi:solar -- "2004-04-05T12:00:00" 1 2
+npm run bazi:lunar -- "2004-03-16T12:00:00" 1 2
 npm run calendar
 npm run calendar -- 2024-02-10
-npm run scan -- 2000 0 --day-pillar 甲寅 --hour 03:30:00
+npm run scan -- 2004 1 --day-pillar 甲寅 --hour 12:00:00
 ```
 
 #### 3. 作为 AI Agent 技能使用（Hermes / OpenClaw）
@@ -125,13 +125,13 @@ npm run scan -- 2000 0 --day-pillar 甲寅 --hour 03:30:00
 排盘：
 
 ```
-帮我排一下八字：2000年12月22日凌晨3点半，女
+帮我排一下八字：2004年4月5日中午12点，男
 ```
 
 全方位分析：
 
 ```
-庚辰 戊子 甲寅 丙寅 女 2000年生人，帮我全方位分析
+甲申 戊辰 甲寅 庚午 男 2004年生人，帮我全方位分析
 ```
 
 Agent 会自动：
@@ -143,7 +143,7 @@ Agent 会自动：
 反推阳历：
 
 ```
-庚辰 戊子 甲寅 丙寅，女命，帮我反推一下阳历出生日期
+甲申 戊辰 甲寅 庚午，男命，帮我反推一下阳历出生日期
 ```
 
 查黄历：
@@ -160,7 +160,7 @@ Agent 会自动：
 第一步：排盘
 
 ```bash
-node scripts/buildBaziFromSolar.ts "2000-12-22T03:30:00" 0 2
+node scripts/buildBaziFromSolar.ts "2004-04-05T12:00:00" 1 2
 ```
 
 输出包含：四柱天干地支、十神、纳音、星运、自坐、藏干、宫位、神煞、大运、刑冲合会。
@@ -201,7 +201,7 @@ node scripts/buildBaziFromSolar.ts "2000-12-22T03:30:00" 0 2
 
 | 模型 | 推荐理由 |
 |------|----------|
-| Claude Sonnet 4 / Opus 4 | 分析深度最强，逻辑严密，长文输出稳定，对命理术语理解精准 |
+| Claude 4.* | Claude 系列越新越好，分析深度最强，逻辑严密，长文输出稳定，对命理术语理解精准 |
 | Qwen 3.7 Max | 中文理解力极强，对八字术语和文化背景把握到位，性价比高 |
 | MiniMax M3 | 中文输出流畅自然，分析有条理，响应速度快 |
 | MiMo v2.5 Pro | 推理能力强，逻辑链条清晰，适合复杂命盘 |
@@ -286,19 +286,19 @@ npm install
 Solar calendar chart:
 
 ```bash
-node scripts/buildBaziFromSolar.ts "2000-12-22T03:30:00" 0 2
+node scripts/buildBaziFromSolar.ts "2004-04-05T12:00:00" 1 2
 ```
 
 | Parameter | Description | Required | Values |
 |-----------|-------------|----------|--------|
-| solarTime | Solar birth datetime (ISO 8601, no timezone) | Yes | `2000-12-22T03:30:00` |
+| solarTime | Solar birth datetime (ISO 8601, no timezone) | Yes | `2004-04-05T12:00:00` |
 | gender | Gender | No | `1`=male, `0`=female (default: 1) |
 | sect | Late-zi-hour config | No | `1`=23:00-23:59 counts as next day, `2`=same day (default: 2) |
 
 Lunar calendar chart:
 
 ```bash
-node scripts/buildBaziFromLunar.ts "2000-11-27T03:30:00" 0 2
+node scripts/buildBaziFromLunar.ts "2004-03-16T12:00:00" 1 2
 ```
 
 Same parameter format as solar. Note: intercalary (leap) lunar months are not supported — convert to solar date first.
@@ -317,41 +317,41 @@ Reverse lookup (find solar date from known four pillars):
 
 ```bash
 # Full four-pillar match
-node scripts/scan_year.ts 2000 0 \
-  --year-pillar 庚辰 \
-  --month-pillar 戊子 \
+node scripts/scan_year.ts 2004 1 \
+  --year-pillar 甲申 \
+  --month-pillar 戊辰 \
   --day-pillar 甲寅 \
-  --hour-pillar 丙寅 \
-  --hour 03:30:00
+  --hour-pillar 庚午 \
+  --hour 12:00:00
 
 # Partial match (only year + month + day pillars known)
-node scripts/scan_year.ts 2000 0 \
-  --year-pillar 庚辰 \
-  --month-pillar 戊子 \
+node scripts/scan_year.ts 2004 1 \
+  --year-pillar 甲申 \
+  --month-pillar 戊辰 \
   --day-pillar 甲寅
 
 # Cross-year scan (same Bazi repeats every 60 years)
-for y in 1940 2000; do node scripts/scan_year.ts $y 0 --day-pillar 甲寅; done
+for y in 1944 2004; do node scripts/scan_year.ts $y 1 --day-pillar 甲寅; done
 ```
 
 | Parameter | Description |
 |-----------|-------------|
 | year | Year to scan (required) |
 | gender | 0=female, 1=male (required) |
-| --year-pillar | Filter by year pillar (e.g. 庚辰) |
-| --month-pillar | Filter by month pillar (e.g. 戊子) |
+| --year-pillar | Filter by year pillar (e.g. 甲申) |
+| --month-pillar | Filter by month pillar (e.g. 戊辰) |
 | --day-pillar | Filter by day pillar (e.g. 甲寅) |
-| --hour-pillar | Filter by hour pillar (e.g. 丙寅) |
+| --hour-pillar | Filter by hour pillar (e.g. 庚午) |
 | --hour | Time to use for scanning, default 15:30:00 (申时) |
 
 #### 2. npm Scripts Shortcut
 
 ```bash
-npm run bazi:solar -- "2000-12-22T03:30:00" 0 2
-npm run bazi:lunar -- "2000-11-27T03:30:00" 0 2
+npm run bazi:solar -- "2004-04-05T12:00:00" 1 2
+npm run bazi:lunar -- "2004-03-16T12:00:00" 1 2
 npm run calendar
 npm run calendar -- 2024-02-10
-npm run scan -- 2000 0 --day-pillar 甲寅 --hour 03:30:00
+npm run scan -- 2004 1 --day-pillar 甲寅 --hour 12:00:00
 ```
 
 #### 3. As an AI Agent Skill (Hermes / OpenClaw)
@@ -361,13 +361,13 @@ After installation, the AI Agent automatically loads this skill. Just talk to th
 Chart generation:
 
 ```
-Chart my Bazi: December 22, 2000 at 3:30 AM, female
+Chart my Bazi: April 5, 2004 at 12:00 PM, male
 ```
 
 Full analysis:
 
 ```
-庚辰 戊子 甲寅 丙寅, female born 2000, give me a full analysis
+甲申 戊辰 甲寅 庚午, male born 2004, give me a full analysis
 ```
 
 The Agent will automatically:
@@ -379,7 +379,7 @@ The Agent will automatically:
 Reverse lookup:
 
 ```
-庚辰 戊子 甲寅 丙寅, female — reverse-lookup the solar birth date
+甲申 戊辰 甲寅 庚午, male — reverse-lookup the solar birth date
 ```
 
 Almanac query:
@@ -394,7 +394,7 @@ Look up the lunar date and auspicious/inauspicious activities for 2024-02-10
 Step 1: Chart generation
 
 ```bash
-node scripts/buildBaziFromSolar.ts "2000-12-22T03:30:00" 0 2
+node scripts/buildBaziFromSolar.ts "2004-04-05T12:00:00" 1 2
 ```
 
 Output includes: Four Pillars (Heavenly Stems + Earthly Branches), Ten Gods, Nayin, Star Phase, Self-Position, Hidden Stems, Palaces, Auspicious Stars, Luck Cycles, and Interactions (clashes, combinations, punishments, harms).
@@ -435,7 +435,7 @@ This project relies on LLMs for destiny analysis and interpretation. Recommended
 
 | Model | Why Recommended |
 |-------|----------------|
-| Claude Sonnet 4 / Opus 4 | Deepest analysis, rigorous logic, stable long-form output, precise understanding of Bazi terminology |
+| Claude 4.* | Claude series (newer is better), deepest analysis, rigorous logic, stable long-form output, precise understanding of Bazi terminology |
 | Qwen 3.7 Max | Excellent Chinese comprehension, strong grasp of Bazi terms and cultural context, great value |
 | MiniMax M3 | Fluent and natural Chinese output, well-structured analysis, fast response |
 | MiMo v2.5 Pro | Strong reasoning capability, clear logical chains, ideal for complex charts |

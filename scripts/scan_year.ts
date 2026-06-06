@@ -6,24 +6,24 @@
  *   node scripts/scan_year.ts <year> <gender> [options]
  *
  * Options:
- *   --year-pillar XX    年柱 to match (e.g. 庚辰)
- *   --month-pillar XX   月柱 to match (e.g. 戊子)
+ *   --year-pillar XX    年柱 to match (e.g. 甲申)
+ *   --month-pillar XX   月柱 to match (e.g. 戊辰)
  *   --day-pillar XX     日柱 to match (e.g. 甲寅)
- *   --hour-pillar XX    时柱 to match (e.g. 丙寅)
+ *   --hour-pillar XX    时柱 to match (e.g. 庚午)
  *   --hour HH:MM:SS     Time to use (default: 15:30:00 for 申时)
  *
  * Examples:
  *   # Full match (all four pillars)
- *   node scripts/scan_year.ts 1996 0 --year-pillar 丙子 --month-pillar 辛卯 --day-pillar 甲寅 --hour-pillar 壬申
+ *   node scripts/scan_year.ts 2004 1 --year-pillar 甲申 --month-pillar 戊辰 --day-pillar 甲寅 --hour-pillar 庚午
  *
  *   # Partial match (just year + month + day, any hour)
- *   node scripts/scan_year.ts 1996 0 --year-pillar 丙子 --month-pillar 辛卯 --day-pillar 甲寅
+ *   node scripts/scan_year.ts 2004 1 --year-pillar 甲申 --month-pillar 戊辰 --day-pillar 甲寅
  *
  *   # Scan with specific hour
- *   node scripts/scan_year.ts 2000 0 --day-pillar 甲寅 --hour 03:30:00
+ *   node scripts/scan_year.ts 2004 1 --day-pillar 甲寅 --hour 12:00:00
  *
  *   # Cross-year scan (60-year cycle)
- *   for y in 1936 1996; do node scripts/scan_year.ts $y 0 --day-pillar 甲寅; done
+ *   for y in 1944 2004; do node scripts/scan_year.ts $y 1 --day-pillar 甲寅; done
  */
 
 import { buildBaziFromSolar } from 'cantian-tymext';
