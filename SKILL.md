@@ -36,6 +36,144 @@ npm install
 
 ---
 
+# 〇、使用指南
+
+## 1. CLI 脚本直接调用
+
+阳历排盘：
+
+```bash
+node scripts/buildBaziFromSolar.ts "2000-12-22T03:30:00" 0 2
+```
+
+| 参数 | 说明 | 必填 | 取值 |
+|------|------|------|------|
+| solarTime | 阳历出生时间（ISO 8601，不带时区） | 是 | `2000-12-22T03:30:00` |
+| gender | 性别 | 否 | `1`=男，`0`=女（默认 1） |
+| sect | 早晚子时配置 | 否 | `1`=23:00-23:59 算次日，`2`=算当日（默认 2） |
+
+农历排盘：
+
+```bash
+node scripts/buildBaziFromLunar.ts "2000-11-27T03:30:00" 0 2
+```
+
+参数格式与阳历一致，时间传入农历日期。注意：不支持农历闰月，闰月需先手动转换为阳历再调用阳历排盘。
+
+黄历查询：
+
+```bash
+# 查询今天
+node scripts/getChineseCalendar.ts
+
+# 查询指定日期
+node scripts/getChineseCalendar.ts 2024-02-10
+```
+
+反推扫描（从已知八字四柱反查阳历出生日期）：
+
+```bash
+# 完整四柱匹配
+node scripts/scan_year.ts 2000 0 \
+  --year-pillar 庚辰 \
+  --month-pillar 戊子 \
+  --day-pillar 甲寅 \
+  --hour-pillar 丙寅 \
+  --hour 03:30:00
+
+# 部分匹配（只知道年月日柱，时柱不确定）
+node scripts/scan_year.ts 2000 0 \
+  --year-pillar 庚辰 \
+  --month-pillar 戊子 \
+  --day-pillar 甲寅
+
+# 跨年份扫描（同一八字每 60 年重复出现）
+for y in 1940 2000; do node scripts/scan_year.ts $y 0 --day-pillar 甲寅; done
+```
+
+| 参数 | 说明 |
+|------|------|
+| year | 要扫描的年份（必填） |
+| gender | 0=女，1=男（必填） |
+| --year-pillar | 年柱过滤（如 庚辰） |
+| --month-pillar | 月柱过滤（如 戊子） |
+| --day-pillar | 日柱过滤（如 甲寅） |
+| --hour-pillar | 时柱过滤（如 丙寅） |
+| --hour | 扫描用的时间，默认 15:30:00（申时） |
+
+## 2. npm scripts 快捷方式
+
+不想记完整路径可以用 npm scripts：
+
+```bash
+npm run bazi:solar -- "2000-12-22T03:30:00" 0 2
+npm run bazi:lunar -- "2000-11-27T03:30:00" 0 2
+npm run calendar
+npm run calendar -- 2024-02-10
+npm run scan -- 2000 0 --day-pillar 甲寅 --hour 03:30:00
+```
+
+## 3. 作为 AI Agent 技能使用（Hermes / OpenClaw）
+
+安装后，AI Agent 会自动加载此技能。直接对 Agent 说话即可触发：
+
+排盘：
+
+```
+帮我排一下八字：2000年12月22日凌晨3点半，女
+```
+
+全方位分析：
+
+```
+庚辰 戊子 甲寅 丙寅 女 2000年生人，帮我全方位分析
+```
+
+Agent 会自动：
+1. 调用排盘脚本获取完整数据（四柱、十神、神煞、大运、刑冲合会）
+2. 向你提出 5 个校准问题（父母关系、父亲驻地、母亲角色、家庭经济、自身状态）
+3. 根据你的回答校准分析
+4. 按八大维度模板输出完整解读报告
+
+反推阳历：
+
+```
+庚辰 戊子 甲寅 丙寅，女命，帮我反推一下阳历出生日期
+```
+
+查黄历：
+
+```
+帮我查一下今天的黄历
+帮我查一下 2024-02-10 的农历和宜忌
+```
+
+## 4. 完整分析工作流（给开发者/高阶用户）
+
+如果你想手动走完整流程，步骤如下：
+
+第一步：排盘
+
+```bash
+node scripts/buildBaziFromSolar.ts "2000-12-22T03:30:00" 0 2
+```
+
+输出包含：四柱天干地支、十神、纳音、星运、自坐、藏干、宫位、神煞、大运、刑冲合会。
+
+第二步：校准（向用户确认 5 个事实）
+
+1. 父母是否在一起？
+2. 父亲做什么工作？常驻地在哪里？
+3. 母亲在带你吗？还是由其他长辈带大？
+4. 家里做什么的？（开店/体制内/务农/外出务工）
+5. 你目前在做什么？（学业/工作/哪个阶段）
+
+第三步：根据排盘数据 + 校准信息，按第八章"全方位分析输出模板"填充分析报告。
+
+第四步：输出为 txt 文件，文件名格式 `八字全解_日主X_生肖X.txt`。
+
+---
+
 # 一、排盘 CLI
 
 ## 脚本清单
@@ -402,10 +540,10 @@ for y in 1936 1996; do node scripts/scan_year.ts $y 0 --day-pillar 甲寅; done
 - [十神组合对气质的影响]
 
 身材走势
-- [年龄段1]：[描述]
-- [年龄段2]：[描述]
-- [年龄段3]：[描述]
-- 💡 [当前年龄的建议]
+- [大运名称]（[起止年份]）：[描述]
+- [大运名称]（[起止年份]）：[描述]
+- [大运名称]（[起止年份]）：[描述]
+- 💡 当前阶段的建议
 
 穿着风格
 - 适合：[风格建议]
@@ -447,24 +585,25 @@ for y in 1936 1996; do node scripts/scan_year.ts $y 0 --day-pillar 甲寅; done
 • 行业: [具体行业]
 • 适配度: [星级]
 
-事业时间线
-[年龄段1]
+事业时间线（用实际年份，不用岁数，避免虚实岁混淆）
+
+[大运名称]（[起止年份]）
 • 阶段: [关键词]
 • 关键词: [描述]
 
-[年龄段2]
+[大运名称]（[起止年份]）
 • 阶段: [关键词]
 • 关键词: [描述]
 
-[年龄段3]
+[大运名称]（[起止年份]）
 • 阶段: [关键词]
 • 关键词: [描述]
 
-[年龄段4]
+[大运名称]（[起止年份]）
 • 阶段: [关键词]
 • 关键词: [描述]
 
-[年龄段5]
+[大运名称]（[起止年份]）
 • 阶段: [关键词]
 • 关键词: [描述]
 
@@ -621,6 +760,7 @@ for y in 1936 1996; do node scripts/scan_year.ts $y 0 --day-pillar 甲寅; done
 4. 用 --- 做章节分隔
 5. 文件编码 UTF-8
 6. 中文输出
+7. 所有年龄段/大运描述必须用实际年份（如 2020-2029），禁止用岁数（如 19-28岁），避免虚实岁混淆
 
 ---
 
@@ -646,6 +786,46 @@ for y in 1936 1996; do node scripts/scan_year.ts $y 0 --day-pillar 甲寅; done
 
 食神制杀 = 用温和方式管人/化解压力。在大机构、小个体户、自由职业、家庭中都可能出现。形态取决于命中其他配置。
 
+## cantian-tymext API 返回中文字段名，不是英文
+
+`buildBaziFromSolar()` 返回的对象使用**中文**字段名，不是英文。手写代码时必须用中文字段访问：
+
+```typescript
+// ❌ 错误 — 这些字段不存在，返回 undefined
+bazi.yearPillar
+bazi.monthPillar
+bazi.dayPillar
+bazi.hourPillar
+
+// ✅ 正确 — 中文字段名
+bazi.年柱.天干.天干  // → "庚"
+bazi.年柱.地支.地支  // → "辰"
+bazi.月柱.天干.天干  // → "戊"
+// ... 以此类推
+```
+
+完整字段结构示例（甲申年 戊辰月 甲寅日 庚午时）：
+```json
+{
+  "性别": 1, "阳历": "...", "农历": "...", "八字": "...", "生肖": "猴", "日主": "甲",
+  "年柱": { "天干": { "天干": "甲", "五行": "木", "阴阳": "阳", "十神": "比肩" }, "地支": { "地支": "申", ... } },
+  "月柱": { ... }, "日柱": { ... }, "时柱": { ... },
+  "胎元": ..., "胎息": ..., "命宫": ..., "身宫": ..., "神煞": [...], "大运": [...], "刑冲合会": {...}
+}
+```
+
+⚠️ 陷阱：`try/catch` 会把 `TypeError: Cannot read properties of undefined` 静默吞掉，表面看到 0 matches 而不是报错。写 `scan_year` 类脚本时，不要把 pillar 访问放在宽泛的 try/catch 里——至少 log 一下非日期相关的错误。
+
+经验教训：PR #2 修复了此 bug，原 `scan_year.ts` 用 `bazi.yearPillar.toString()` 导致所有反推扫描永远返回 0 matches。
+
+## 本地 skill 与 GitHub 仓库同步
+
+当 skill 同时存在于本地 Hermes（`~/.hermes/skills/`）和 GitHub 仓库时：
+- PR 合并只更新 GitHub 仓库，**不会**自动更新本地 skill
+- 每次合并 PR 后，必须手动将改动同步到本地 skill 目录
+- 同步方法：`cp ~/Documents/bazi-full-fortune/scripts/*.ts ~/.hermes/skills/divination/bazi-full-fortune/scripts/` 等
+- 同理，ClawHub 发布也需要手动同步后重新 publish
+
 ---
 
 # 八、参考文档
@@ -654,7 +834,30 @@ for y in 1936 1996; do node scripts/scan_year.ts $y 0 --day-pillar 甲寅; done
 
 ---
 
-# 九、注意事项
+# 九、ClawHub 发布注意事项
+
+## Frontmatter 必须纯 ASCII
+
+ClawHub 后端（Convex DB）不接受非 ASCII 字符作为字段名。以下会导致发布失败：
+
+- `tags` 中包含中文标签（如 `八字`、`命理`、`四柱`）→ 报错 `Field name 八字 has invalid character '八'`
+- `name` 字段使用中文（如 `八字全方位算命`）→ 同样报错
+
+正确做法：
+- `tags` 只用英文：`[bazi, fortune-telling, chinese-astrology, destiny-analysis, four-pillars]`
+- `name` 用英文：`Bazi Full Fortune Telling`（中文放在 `description` 里，description 支持 Unicode）
+
+```bash
+# ❌ 会失败
+clawhub publish . --name "八字全方位算命" --tags "bazi,八字,命理"
+
+# ✅ 正确
+clawhub publish . --name "Bazi Full Fortune Telling" --tags "bazi,fortune-telling,chinese-astrology"
+```
+
+---
+
+# 十、注意事项
 
 1. 所有命令均在项目根目录执行
 2. 时间字符串不要携带时区后缀（如 `Z`、`+08:00`），以免产生与预期不一致的换日结果
