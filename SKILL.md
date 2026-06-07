@@ -766,71 +766,14 @@ for y in 1936 1996; do node scripts/scan_year.ts $y 0 --day-pillar 甲寅; done
 
 # 七、常见陷阱
 
-## 不要纯靠手推判断日主强弱
-
-手动分析容易遗漏星运细节。必须以脚本输出的 `星运` 和 `自坐` 字段为准，再结合五行生克综合判断。
-
-## 五行强弱判断：加权计算，不可数数
-
-绝对不能把地支和藏干本气重复计算。详见上方"分析要点 → 五行强弱"。
-
-## 辛金喜忌：不要把土当喜用神
-
-辛金（珠玉金）忌土重埋金。辛金喜壬水洗涤、喜甲木疏土。不能机械套用"印生身=印是喜用"。
-
-## 父母分析：不要套"严父慈母"/"严母慈父" cliché
-
-详见 `references/family-patterns.md`。核心原则：先回答"在不在场"再回答"严不严"。
-
-## 食神制杀的工作形态：不一定是大机构
-
-食神制杀 = 用温和方式管人/化解压力。在大机构、小个体户、自由职业、家庭中都可能出现。形态取决于命中其他配置。
-
-## cantian-tymext API 返回中文字段名，不是英文
-
-`buildBaziFromSolar()` 返回的对象使用**中文**字段名，不是英文。手写代码时必须用中文字段访问：
-
-```typescript
-// ❌ 错误 — 这些字段不存在，返回 undefined
-bazi.yearPillar
-bazi.monthPillar
-bazi.dayPillar
-bazi.hourPillar
-
-// ✅ 正确 — 中文字段名
-bazi.年柱.天干.天干  // → "庚"
-bazi.年柱.地支.地支  // → "辰"
-bazi.月柱.天干.天干  // → "戊"
-// ... 以此类推
-```
-
-完整字段结构示例（甲申年 戊辰月 甲寅日 庚午时）：
-```json
-{
-  "性别": 1, "阳历": "...", "农历": "...", "八字": "...", "生肖": "猴", "日主": "甲",
-  "年柱": { "天干": { "天干": "甲", "五行": "木", "阴阳": "阳", "十神": "比肩" }, "地支": { "地支": "申", ... } },
-  "月柱": { ... }, "日柱": { ... }, "时柱": { ... },
-  "胎元": ..., "胎息": ..., "命宫": ..., "身宫": ..., "神煞": [...], "大运": [...], "刑冲合会": {...}
-}
-```
-
-⚠️ 陷阱：`try/catch` 会把 `TypeError: Cannot read properties of undefined` 静默吞掉，表面看到 0 matches 而不是报错。写 `scan_year` 类脚本时，不要把 pillar 访问放在宽泛的 try/catch 里——至少 log 一下非日期相关的错误。
-
-经验教训：PR #2 修复了此 bug，原 `scan_year.ts` 用 `bazi.yearPillar.toString()` 导致所有反推扫描永远返回 0 matches。
-
-## 本地 skill 与 GitHub 仓库同步
-
-当 skill 同时存在于本地 Hermes（`~/.hermes/skills/`）和 GitHub 仓库时：
-- PR 合并只更新 GitHub 仓库，**不会**自动更新本地 skill
-- 每次合并 PR 后，必须手动将改动同步到本地 skill 目录
-- 同步方法：`cp ~/Documents/bazi-full-fortune/scripts/*.ts ~/.hermes/skills/divination/bazi-full-fortune/scripts/` 等
-- 同理，ClawHub 发布也需要手动同步后重新 publish
+详见 `references/pitfalls.md`。
 
 ---
 
 # 八、参考文档
 
 - `references/family-patterns.md` — 家庭背景命理模式速查清单（8种模式的信号→推断→校准问题）
+- `references/pitfalls.md` — 常见陷阱与注意事项（日主强弱、五行计算、API字段、同步流程等）
 
 ---
 
