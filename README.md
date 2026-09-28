@@ -216,14 +216,18 @@ node scripts/buildBaziFromSolar.ts "2004-04-05T12:00:00" 1 2
 
 ### 推荐 LLM 模型
 
-本项目依赖 LLM 进行命理分析和解读，以下是实测后推荐的模型：
+本项目依赖 LLM 进行命理分析和解读，以下模型按实测效果从高到低排名：
 
-| 模型 | 推荐理由 |
-|------|----------|
-| Claude 4.* | Claude 系列越新越好，分析深度最强，逻辑严密，长文输出稳定，对命理术语理解精准 |
-| Qwen 3.7 Max | 中文理解力极强，对八字术语和文化背景把握到位，性价比高 |
-| MiniMax M3 | 中文输出流畅自然，分析有条理，响应速度快 |
-| MiMo v2.5 Pro | 推理能力强，逻辑链条清晰，适合复杂命盘 |
+| 排名 | 模型 | 推荐理由 |
+|------|------|----------|
+| 1 | Qwen3.8 Max | 当前效果最佳，中文理解力与八字术语把握最强，逻辑严密，支持超长上下文，性价比高 |
+| 2 | Kimi K3 | 长文分析能力强，推理出色，对命理术语和文化背景理解到位 |
+| 3 | GLM-5 | 推理与 Agent 能力突出，中文命理语境把握准确，开源且性价比高 |
+| 4 | GPT-5.6 | 综合能力全面，分析严谨，中文命理术语理解稍逊于国产旗舰 |
+| 5 | DeepSeek V4 | 推理链条清晰，适合复杂命盘拆解，价格低廉 |
+| 6 | Claude Opus 5 | 分析深度强，长文输出稳定，对命理术语理解精准 |
+
+此外，MiniMax M3、MiMo v2.5 Pro 也可正常使用，可作为备选。
 
 ### 项目结构
 
@@ -481,14 +485,18 @@ Calibration workflow: Ask 5 key questions after charting (parents' relationship,
 
 ### Recommended LLMs
 
-This project relies on LLMs for destiny analysis and interpretation. Recommended models after real-world testing:
+This project relies on LLMs for destiny analysis and interpretation. Models below are ranked by real-world performance (best first):
 
-| Model | Why Recommended |
-|-------|----------------|
-| Claude 4.* | Claude series (newer is better), deepest analysis, rigorous logic, stable long-form output, precise understanding of Bazi terminology |
-| Qwen 3.7 Max | Excellent Chinese comprehension, strong grasp of Bazi terms and cultural context, great value |
-| MiniMax M3 | Fluent and natural Chinese output, well-structured analysis, fast response |
-| MiMo v2.5 Pro | Strong reasoning capability, clear logical chains, ideal for complex charts |
+| Rank | Model | Why Recommended |
+|------|-------|----------------|
+| 1 | Qwen3.8 Max | Best overall performance: strongest Chinese comprehension and Bazi terminology grasp, rigorous logic, ultra-long context support, great value |
+| 2 | Kimi K3 | Excellent long-form analysis and reasoning, solid grasp of metaphysics terms and cultural context |
+| 3 | GLM-5 | Outstanding reasoning and agent capabilities, accurate Chinese metaphysics context, open-source and cost-effective |
+| 4 | GPT-5.6 | Well-rounded and rigorous analysis, slightly behind top Chinese models on Bazi terminology |
+| 5 | DeepSeek V4 | Clear reasoning chains for complex charts, very affordable |
+| 6 | Claude Opus 5 | Deep analysis, stable long-form output, precise understanding of Bazi terminology |
+
+MiniMax M3 and MiMo v2.5 Pro are also viable alternatives.
 
 ### Project Structure
 
